@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>福泰路1号</title>
+  <style>
+    /* ===== Reset & Variables ===== */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --red:       #c0392b;
+      --red-light: #fce4e4;
+      --red-text:  #e74c3c;
+      --white:     #ffffff;
+      --bg:        #fff8f7;
+      --bg-card:   #fff;
+      --gray-50:   #2c3e50;
+      --gray-70:   #555;
+      --gray-80:   #666;
+      --gray-90:   #7f8c8d;
+      --gray-95:   #999;
+      --gray-lt:   #f5f0ef;
+      --border:    #e8e0de;
+      --shadow:    0 2px 12px rgba(192,57,43,0.06);
+      --radius:    14px;
+    }
+    body {
+      font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+      background: var(--bg);
+      color: var(--gray-50);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+    .container { max-width: 640px; margin: 0 auto; padding: 0 16px; }
+
+    /* ===== Top Bar ===== */
+    .top-bar {
+      background: linear-gradient(135deg, #c0392b 0%, #e74c3c 100%);
+      color: #fff;
+      text-align: center;
+      padding: 20px 16px 14px;
+      position: relative;
+    }
+    .top-bar .resmmy-title { font-size: 22px; font-weight: 700; letter-spacing: 2px; }
+    .top-bar .time { font-size: 26px; font-weight: 700; letter-spacing: 1px; margin-top: 4px; }
+    .top-bar .sub { font-size: 11px; color: rgba(255,255,255,0.65); margin-top: 4px; }
+
+    /* ===== Back Button ===== */
+    .back-bar {
+      display: flex; align-items: center; gap: 8px; padding: 12px 0;
+      background: var(--bg); position: sticky; top: 0; z-index: 10;
+    }
+    .back-btn {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: var(--red); color: #fff; border: none; border-radius: 8px;
+      padding: 6px 14px; font-size: 13px; cursor: pointer; font-weight: 600;
+    }
+    .back-btn:hover { opacity: 0.85; }
+    .page-title { font-size: 16px; font-weight: 600; color: var(--gray-50); margin-left: 4px; }
+
+    /* ===== Cards ===== */
+    .card {
+      background: var(--bg-card);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow);
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      border: 1px solid var(--border);
+    }
+    .card:active { transform: scale(0.97); }
+    .card-icon { font-size: 28px; margin-bottom: 8px; }
+    .card-name { font-size: 16px; font-weight: 600; color: var(--gray-50); }
+    .card-desc { font-size: 12px; color: var(--gray-90); margin-top: 4px; line-height: 1.5; }
+
+    /* ===== Page ===== */
+    .page { display: none; }
+    .page.active { display: block; }
+
+    /* ===== Home Grid ===== */
+    .home-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; padding: 14px 0; }
+    .home-grid .card { text-align: center; padding: 14px 6px; }
+    .home-grid .card .card-icon { font-size: 22px; }
+    .home-grid .card .card-name { font-size: 13px; }
+    .home-grid .card .card-desc { font-size: 10px; }
+
+    /* ===== List Cards ===== */
+    .list-card {
+      background: var(--bg-card); border-radius: var(--radius); padding: 16px; margin-bottom: 10px;
+      border: 1px solid var(--border); cursor: pointer; transition: transform 0.2s;
+    }
+    .list-card:active { transform: scale(0.97); }
+    .list-card-arrow { float: right; color: var(--border); font-size: 18px; }
+
+    /* ===== Stock Card ===== */
+    .stock-item {
+      background: var(--bg-card); border-radius: 12px; padding: 14px; margin-bottom: 10px;
+      border: 1px solid var(--border);
+    }
+    .stock-hdr { display: flex; justify-content: space-between; align-items: center; }
+    .stock-name { font-weight: 600; font-size: 14px; color: var(--red); }
+    .stock-code { font-size: 12px; color: var(--gray-90); }
+    .stock-meta { font-size: 12px; color: var(--gray-90); margin-top: 2px; }
+    .stock-reason { font-size: 12px; color: var(--gray-70); margin-top: 8px; line-height: 1.6; }
+    .tag-market { display: inline-block; background: var(--red-light); color: var(--red-text); font-size: 10px; padding: 1px 6px; border-radius: 4px; margin-left: 4px; }
+    .tag-short { background: #fef3e2; color: #d9822b; }
+    .tag-mid  { background: #e8f5e9; color: #2e7d32; }
+    .tag-long { background: #e3f2fd; color: #1565c0; }
+
+    /* ===== Report Section ===== */
+    .report-item {
+      background: var(--bg-card); border-radius: 12px; padding: 14px; margin-bottom: 10px;
+      border: 1px solid var(--border);
+    }
+    .report-source { font-size: 11px; color: var(--gray-95); margin-bottom: 4px; }
+    .report-title { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+    .report-summary { font-size: 12px; color: var(--gray-70); line-height: 1.6; }
+    .report-source-name { color: var(--red-text); font-weight: 500; }
+
+    /* ===== Search & Filter ===== */
+    .search-bar {
+      display: flex; gap: 8px; padding: 12px 0; align-items: center;
+    }
+    .search-input {
+      flex: 1; border: 1px solid var(--border); border-radius: 8px;
+      padding: 8px 12px; font-size: 13px; background: var(--bg-card);
+      outline: none; transition: border-color 0.2s;
+    }
+    .search-input:focus { border-color: var(--red-text); }
+    .search-btn {
+      background: var(--red); color: #fff; border: none; border-radius: 8px;
+      padding: 8px 14px; font-size: 13px; cursor: pointer; font-weight: 600;
+    }
+    .search-btn:hover { opacity: 0.85; }
+    .filter-row {
+      display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap;
+    }
+    .filter-select {
+      border: 1px solid var(--border); border-radius: 8px;
+      padding: 6px 10px; font-size: 12px; background: var(--bg-card);
+      outline: none; color: var(--gray-50); flex: 1; min-width: 80px;
+    }
+    .filter-tag {
+      display: inline-block; background: var(--red-light); color: var(--red-text);
+      font-size: 11px; padding: 2px 10px; border-radius: 12px;
+      margin-right: 6px; margin-bottom: 6px; cursor: pointer;
+    }
+    .filter-tag.active { background: var(--red-text); color: #fff; }
+    .filter-active-row { margin-bottom: 8px; }
+    .filter-clear {
+      font-size: 11px; color: var(--gray-90); cursor: pointer; text-decoration: underline;
+    }
+    .search-result-count {
+      font-size: 12px; color: var(--gray-90); margin-bottom: 8px;
+    }
+
+    /* ===== History Date Nav ===== */
+    .history-bar {
+      display: flex; gap: 6px; padding: 8px 0; overflow-x: auto;
+      -webkit-overflow-scrolling: touch; margin-bottom: 4px;
+    }
+    .history-bar::-webkit-scrollbar { height: 2px; }
+    .history-bar::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+    .history-date {
+      flex-shrink: 0; padding: 6px 14px; border-radius: 16px;
+      font-size: 12px; cursor: pointer; border: 1px solid var(--border);
+      background: var(--bg-card); color: var(--gray-70);
+      transition: all 0.2s; white-space: nowrap;
+    }
+    .history-date.selected { background: var(--red); color: #fff; border-color: var(--red); }
+    .history-date.today { border-color: var(--red-text); font-weight: 600; }
+    .history-date:hover:not(.selected) { background: var(--gray-lt); }
+
+    /* ===== Toast ===== */
+    .gallery-item { border-radius: 10px; overflow: hidden; border: 1px solid var(--border); position: relative; }
+    .gallery-item img { width: 100%; height: 140px; object-fit: cover; display: block; }
+    .gallery-item .del {
+      position: absolute; top: 4px; right: 4px; background: rgba(0,0,0,0.5); color: #fff;
+      border: none; border-radius: 50%; width: 22px; height: 22px; font-size: 12px; cursor: pointer;
+    }
+    .gallery-item .dl {
+      position: absolute; bottom: 4px; right: 4px; background: rgba(0,0,0,0.5); color: #fff;
+      border: none; border-radius: 4px; padding: 2px 8px; font-size: 11px; cursor: pointer; text-decoration: none;
+    }
+    .upload-area {
+      border: 2px dashed var(--border); border-radius: 12px; padding: 20px; text-align: center;
+      margin-top: 12px; cursor: pointer; transition: border-color 0.2s;
+    }
+    .upload-area:hover { border-color: var(--red-text); }
+    .upload-area input { display: none; }
+
+    /* ===== Section Head ===== */
+    .section-head { font-size: 14px; font-weight: 600; margin: 14px 0 8px; color: var(--red); }
+
+    /* ===== Toast ===== */
+    #toast { position: fixed; top: 16px; left: 50%; transform: translateX(-50%); z-index: 999;
+      background: var(--gray-50); color: #fff; padding: 10px 20px; border-radius: 8px;
+      font-size: 13px; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+    #toast.show { opacity: 1; }
+  
+    /* ===== New Feature Page Styles ===== */
+    .overseas-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+    .overseas-card { background: #fff; border-radius: 8px; padding: 8px 10px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #f0f0f0; }
+    .overseas-label { font-size: 12px; color: #666; }
+    .overseas-value { font-size: 13px; font-weight: 600; }
+    .overseas-value.up { color: #e74c3c; }
+    .overseas-value.down { color: #27ae60; }
+
+    .calendar-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+    .calendar-card { background: #fafafa; border-radius: 8px; padding: 8px 10px; }
+    .calendar-card .cal-label { font-size: 11px; color: #999; margin-bottom: 2px; }
+    .calendar-card .cal-value { font-size: 12px; font-weight: 600; color: #333; }
+
+    .ann-item { background: #fff; border-radius: 8px; padding: 10px; margin-bottom: 6px; border: 1px solid #f0f0f0; }
+    .ann-tag { display: inline-block; font-size: 10px; padding: 1px 6px; border-radius: 3px; margin-right: 4px; font-weight: 600; }
+    .ann-title { font-size: 12px; color: #555; margin-top: 4px; line-height: 1.5; }
+    .ann-source { font-size: 12px; font-weight: 600; }
+
+    .compare-card { background: #fff; border-radius: 10px; margin-bottom: 8px; border: 1px solid #eee; overflow: hidden; }
+    .compare-topic { font-size: 14px; font-weight: 700; color: #2c3e50; padding: 10px 12px; background: #fafafa; border-bottom: 1px solid #eee; }
+    .compare-views { display: grid; grid-template-columns: 1fr 1fr; }
+    .compare-side { padding: 10px 12px; flex: 1; }
+    .compare-side.bull { border-right: 1px solid #eee; }
+    .compare-header { font-size: 11px; font-weight: 600; margin-bottom: 4px; }
+    .compare-header .bull-label { color: #e74c3c; }
+    .compare-header .bear-label { color: #27ae60; }
+    .compare-text { font-size: 11px; line-height: 1.6; color: #555; }
+
+    .rot-card { background: #fff; border-radius: 8px; padding: 10px; margin-bottom: 6px; border: 1px solid #f0f0f0; }
+    .rot-hdr { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+    .rot-name { font-size: 13px; font-weight: 600; }
+    .rot-pct { font-size: 13px; font-weight: 700; }
+    .rot-pct.up { color: #e74c3c; }
+    .rot-pct.down { color: #27ae60; }
+    .rot-bar-wrap { height: 6px; background: #f0f0f0; border-radius: 3px; margin-bottom: 4px; overflow: hidden; }
+    .rot-bar { height: 100%; border-radius: 3px; }
+    .rot-bar.up { background: linear-gradient(90deg, #f9b3b3, #e74c3c); }
+    .rot-bar.down { background: linear-gradient(90deg, #a8d8a8, #27ae60); }
+    .rot-reason { font-size: 11px; color: #888; line-height: 1.4; }
+
+    .ah-card { background: #fff; border-radius: 8px; padding: 10px; margin-bottom: 6px; border: 1px solid #f0f0f0; }
+    .ah-card .ah-hdr { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+    .ah-card .ah-name { font-size: 13px; font-weight: 600; }
+    .ah-card .ah-code { font-size: 11px; color: #999; }
+    .ah-card .ah-pct { font-size: 12px; font-weight: 600; color: #e74c3c; background: #fce4e4; padding: 2px 6px; border-radius: 3px; }
+    .ah-card .ah-meta { font-size: 11px; color: #888; margin-bottom: 4px; }
+    .ah-card .ah-reason { font-size: 11px; color: #666; line-height: 1.5; }
+
+    .rank-item { display: flex; align-items: center; padding: 8px 10px; border-bottom: 1px solid #f5f5f5; }
+    .rank-item:last-child { border-bottom: none; }
+    .rank-num { width: 22px; height: 22px; border-radius: 50%; background: #f0f0f0; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: #666; margin-right: 8px; }
+    .rank-num.top3 { background: #e74c3c; color: #fff; }
+    .rank-name { font-size: 13px; font-weight: 600; flex: 1; }
+    .rank-code { font-size: 10px; color: #999; margin-right: 8px; }
+    .rank-pct { font-size: 12px; font-weight: 600; margin-right: 10px; }
+    .rank-amount { font-size: 12px; font-weight: 700; color: #e74c3c; width: 65px; text-align: right; }
+
+    .ladder-card { background: #f9f9f9; border-radius: 8px; padding: 10px; margin-bottom: 6px; }
+    .ladder-level { font-size: 13px; font-weight: 700; color: #2c3e50; margin-bottom: 4px; }
+    .ladder-stocks { font-size: 12px; color: #555; margin-bottom: 2px; }
+    .ladder-desc { font-size: 11px; color: #888; }
+
+    .lh-card { background: #fff; border-radius: 8px; padding: 10px; margin-bottom: 6px; border: 1px solid #f0f0f0; }
+    .lh-hdr { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+    .lh-name { font-size: 13px; font-weight: 600; }
+    .lh-type-buy { color: #e74c3c; font-size: 12px; font-weight: 600; background: #fce4e4; padding: 2px 8px; border-radius: 3px; }
+    .lh-type-sell { color: #27ae60; font-size: 12px; font-weight: 600; background: #e8f5e8; padding: 2px 8px; border-radius: 3px; }
+    .lh-reason { font-size: 11px; color: #666; line-height: 1.5; }
+</style>
+</head>
+<body>
+
+<div id="toast"></div>
+<div class="container" id="app">
+
+  <!-- ===== Home Page ===== -->
+  <div class="page active" id="page-home">
+    <!-- Top Bar -->
+    <div class="top-bar">
+      <div class="resmmy-title">福泰路1号</div>
+      <div class="time" id="currentTime">--:--</div>
+      <div class="sub">由福泰路AI小组编撰</div>
+    </div>
+
+    <div class="home-grid">
+      <div class="card" onclick="navigate('investment')">
+        <div class="card-icon">📈</div>
+        <div class="card-name">今日投资机会</div>
+        <div class="card-desc">按行业板块整理研究报告，结合A股/美股市场</div>
+      </div>
+      <div class="card" onclick="navigate('report')">
+        <div class="card-icon">📚</div>
+        <div class="card-name">研究报告</div>
+        <div class="card-desc">券商晨会 · 大V观点 · 行业研报</div>
+      </div>
+      <div class="card" onclick="navigate('industry')">
+        <div class="card-icon">🔗</div>
+        <div class="card-name">产业链</div>
+        <div class="card-desc">CPO/光通信 · AI算力 · 存储</div>
+      </div>
+    <div class="card" onclick="navigate('premarket')">
+      <div class="card-icon">&#x1f305;</div>
+      <div class="card-name">&#x76d8;&#x524d;&#x5fc5;&#x8bfb;</div>
+      <div class="card-desc">&#x9694;&#x591c;&#x5916;&#x76d8; &#xb7; &#x4eca;&#x65e5;&#x65e5;&#x5386;</div>
+    </div>
+    <div class="card" onclick="navigate('rotation')">
+      <div class="card-icon">&#x1f504;</div>
+      <div class="card-name">&#x677f;&#x5757;&#x8f6e;&#x52a8;</div>
+      <div class="card-desc">&#x70ed;&#x70b9;&#x677f;&#x5757; &#xb7; &#x8d44;&#x91d1;&#x6d41;&#x5411;</div>
+    </div>
+    <div class="card" onclick="navigate('afterhours')">
+      <div class="card-icon">&#x1f319;</div>
+      <div class="card-name">&#x76d8;&#x540e;&#x590d;&#x76d8;</div>
+      <div class="card-desc">&#x6da8;&#x505c;&#x5206;&#x6790; &#xb7; &#x9f99;&#x864e;&#x699c;</div>
+    </div>
+    </div>
+  </div>
+
+
+  <!-- ===== &#x76d8;&#x524d;&#x5fc5;&#x8bfb; ===== -->
+  <div class="page" id="page-premarket">
+    <div class="back-bar">
+      <button class="back-btn" onclick="navigate('home')">&#x2190; &#x8fd4;&#x56de;</button>
+      <span class="page-title">&#x76d8;&#x524d;&#x5fc5;&#x8bfb;</span>
+    </div>
+    <!-- &#x9694;&#x591c;&#x5916;&#x76d8; -->
+    <div class="section-divider">&#x1f30f; &#x9694;&#x591c;&#x5916;&#x76d8;</div>
+    <div class="info-card" id="premarket-overseas"></div>
+    <!-- &#x4eca;&#x65e5;&#x65e5;&#x5386; -->
+    <div class="section-divider">&#x1f4c5; &#x4eca;&#x65e5;&#x65e5;&#x5386;</div>
+    <div class="info-card" id="premarket-calendar"></div>
+    <!-- &#x91cd;&#x8981;&#x516c;&#x544a; -->
+    <div class="section-divider">&#x1f4e2; &#x91cd;&#x8981;&#x516c;&#x544a;</div>
+    <div id="premarket-announcements"></div>
+    <!-- &#x591a;&#x7a7a;&#x89c2;&#x70b9;&#x5bf9;&#x6bd4; -->
+    <div class="section-divider">&#x2696;&#xufe0f; &#x591a;&#x7a7a;&#x89c2;&#x70b9;&#x5bf9;&#x6bd4;</div>
+    <div id="premarket-compare"></div>
+  </div>
+
+  <!-- ===== &#x677f;&#x5757;&#x8f6e;&#x52a8; ===== -->
+  <div class="page" id="page-rotation">
+    <div class="back-bar">
+      <button class="back-btn" onclick="navigate('home')">&#x2190; &#x8fd4;&#x56de;</button>
+      <span class="page-title">&#x677f;&#x5757;&#x8f6e;&#x52a8;</span>
+    </div>
+    <div class="section-divider">&#x1f4c8; &#x4eca;&#x65e5;&#x9886;&#x6da8;&#x677f;&#x5757;</div>
+    <div id="rotation-gainers"></div>
+    <div class="section-divider">&#x1f4c9; &#x4eca;&#x65e5;&#x9886;&#x8dcc;&#x677f;&#x5757;</div>
+    <div id="rotation-losers"></div>
+  </div>
+
+  <!-- ===== &#x76d8;&#x540e;&#x590d;&#x76d8; ===== -->
+  <div class="page" id="page-afterhours">
+    <div class="back-bar">
+      <button class="back-btn" onclick="navigate('home')">&#x2190; &#x8fd4;&#x56de;</button>
+      <span class="page-title">&#x76d8;&#x540e;&#x590d;&#x76d8;</span>
+    </div>
+    <div class="section-divider">&#x1f525; &#x6da8;&#x505c;&#x5206;&#x6790;</div>
+    <div id="afterhours-limits"></div>
+    <div class="section-divider">&#x1f4b0; &#x8d44;&#x91d1;&#x6d41;&#x5165;TOP10</div>
+    <div id="afterhours-inflow"></div>
+    <div class="section-divider">&#x1f4ca; &#x6da8;&#x505c;&#x68af;&#x961f;</div>
+    <div id="afterhours-ladder"></div>
+    <div class="section-divider">&#x1f3c6; &#x9f99;&#x864e;&#x699c;</div>
+    <div id="afterhours-lh"></div>
+  </div>
+
+  <!-- ===== &#x4eca;&#x65e5;&#x6295;&#x8d44;&#x673a;&#x4f1a; ===== -->
+  <div class="page" id="page-investment">
+    <div class="back-bar">
+      <button class="back-btn" onclick="navigate('home')">← 返回</button>
+      <span class="page-title">今日投资机会</span>
+    </div>
+    <!-- 搜索 -->
+    <div class="search-bar">
+      <input class="search-input" id="invest-search-input" placeholder="搜索股票名称/代码/行业..." oninput="searchInvestments()">
+      <button class="search-btn" onclick="searchInvestments()">搜索</button>
+    </div>
+    <!-- 筛选 -->
+    <div class="filter-row">
+      <select class="filter-select" id="invest-filter-industry" onchange="searchInvestments()">
+        <option value="">全部行业</option>
+        <option value="光通信">光通信</option>
+        <option value="AI算力">AI算力</option>
+        <option value="存储">存储</option>
+        <option value="半导体">半导体</option>
+        <option value="商业航天">商业航天</option>
+        <option value="券商">券商</option>
+        <option value="通信设备">通信设备</option>
+        <option value="医药">医药</option>
+        <option value="消费">消费</option>
+        <option value="新能源">新能源</option>
+      </select>
+      <select class="filter-select" id="invest-filter-market" onchange="searchInvestments()">
+        <option value="">全部市场</option>
+        <option value="A股">A股</option>
+        <option value="港股">港股</option>
+      </select>
+      <select class="filter-select" id="invest-filter-horizon" onchange="searchInvestments()">
+        <option value="">全部周期</option>
+        <option value="短期">短期</option>
+        <option value="中期">中期</option>
+        <option value="长期">长期</option>
+      </select>
+    </div>
+    <div class="search-result-count" id="invest-result-count"></div>
+    <div id="investment-list"></div>
+  </div>
+
+  <!-- ===== 研究报告 ===== -->
+  <div class="page" id="page-report">
+    <div class="back-bar">
+      <button class="back-btn" onclick="navigate('home')">← 返回</button>
+      <span class="page-title">研究报告</span>
+    </div>
+    <div class="list-card" onclick="navigate('report-broker')">
+      <span class="list-card-arrow">›</span>
+      <div style="font-weight:600;">券商晨会</div>
+      <div style="font-size:12px;color:var(--gray-90);margin-top:2px;">收集各大券商晨会报告，归纳总结观点</div>
+    </div>
+    <div class="list-card" onclick="navigate('report-kol')">
+      <span class="list-card-arrow">›</span>
+      <div style="font-weight:600;">微信公众号大V</div>
+      <div style="font-size:12px;color:var(--gray-90);margin-top:2px;">收集公众号大V观点，归纳总结呈现</div>
+    </div>
+    <div class="list-card" onclick="navigate('report-industry')">
+      <span class="list-card-arrow">›</span>
+      <div style="font-weight:600;">行业研究报告</div>
+      <div style="font-size:12px;color:var(--gray-90);margin-top:2px;">收集各券商行业分析报告，归纳总结呈现</div>
+    </div>
+  </div>
+
+  <!-- ===== 研究报告 第三级 ===== -->
+  <div class="page" id="page-report-broker">
+    <div class="back-bar">
+      <button class="back-btn" onclick="navigate('report')">← 返回</button>
+      <span class="page-title">券商晨会</span>
+    </div>
+    <!-- 历史日期导航 -->
+    <div class="history-bar" id="history-bar-broker"></div>
+    <!-- 搜索 -->
+    <div class="search-bar">
+      <input class="search-input" id="broker-search-input" placeholder="搜索券商/标题/摘要..." oninput="searchReports('broker')">
+      <button class="search-btn" onclick="searchReports('broker')">搜索</button>
+    </div>
+    <div class="search-result-count" id="broker-result-count"></div>
+    <div id="report-broker-list"></div>
+  </div>
+  <div class="page" id="page-report-kol">
+    <div class="back-bar">
+      <button class="back-btn" onclick="navigate('report')">← 返回</button>
+      <span class="page-title">大V观点</span>
+    </div>
+    <div class="history-bar" id="history-bar-kol"></div>
+    <div class="search-bar">
+      <input class="search-input" id="kol-search-input" placeholder="搜索大V/标题/摘要..." oninput="searchReports('kol')">
+      <button class="search-btn" onclick="searchReports('kol')">搜索</button>
+    </div>
+    <div class="search-result-count" id="kol-result-count"></div>
+    <div id="report-kol-list"></div>
+  </div>
+  <div class="page" id="page-report-industry">
+    <div class="back-bar">
+      <button class="back-btn" onclick="navigate('report')">← 返回</button>
+      <span class="page-title">行业研究报告</span>
+    </div>
+    <div class="history-bar" id="history-bar-industry"></div>
+    <div class="search-bar">
+      <input class="search-input" id="industry-search-input" placeholder="搜索来源/标题/摘要..." oninput="searchReports('industry')">
+      <button class="search-btn" onclick="searchReports('industry')">搜索</button>
+    </div>
+    <div class="search-result-count" id="industry-result-count"></div>
+    <div id="report-industry-list"></div>
+  </div>
+
+  <!-- ===== 产业链 ===== -->
+  <div class="page" id="page-industry">
+    <div class="back-bar">
+      <button class="back-btn" onclick="navigate('home')">← 返回</button>
+      <span class="page-title">产业链</span>
+    </div>
+    <div class="list-card" onclick="navigate('industry-cpo')">
+      <span class="list-card-arrow">›</span>
+      <div style="font-weight:600;">CPO/光通信</div>
+      <div style="font-size:12px;color:var(--gray-90);margin-top:2px;">共封装光学产业链图片</div>
+    </div>
+    <div class="list-card" onclick="navigate('industry-ai')">
+      <span class="list-card-arrow">›</span>
+      <div style="font-weight:600;">AI算力</div>
+      <div style="font-size:12px;color:var(--gray-90);margin-top:2px;">AI算力产业链图片</div>
+    </div>
+    <div class="list-card" onclick="navigate('industry-storage')">
+      <span class="list-card-arrow">›</span>
+      <div style="font-weight:600;">存储</div>
+      <div style="font-size:12px;color:var(--gray-90);margin-top:2px;">存储产业链图片</div>
+    </div>
+  </div>
+
+  <!-- ===== 产业链 第三级 ===== -->
+  <div class="page" id="page-industry-cpo">
+    <div class="back-bar">
+      <button class="back-btn" onclick="navigate('industry')">← 返回</button>
+      <span class="page-title">CPO/光通信</span>
+    </div>
+    <div class="upload-area" onclick="document.getElementById('cpo-upload').click()">
+      <div style="font-size:32px;margin-bottom:4px;">📤</div>
+      <div style="font-size:13px;color:var(--gray-90);">点击上传图片</div>
+      <input type="file" id="cpo-upload" accept="image/*" onchange="uploadImage('cpo', this)">
+    </div>
+    <div class="gallery" id="cpo-gallery"></div>
+  </div>
+  <div class="page" id="page-industry-ai">
+    <div class="back-bar">
+      <button class="back-btn" onclick="navigate('industry')">← 返回</button>
+      <span class="page-title">AI算力</span>
+    </div>
+    <div class="upload-area" onclick="document.getElementById('ai-upload').click()">
+      <div style="font-size:32px;margin-bottom:4px;">📤</div>
+      <div style="font-size:13px;color:var(--gray-90);">点击上传图片</div>
+      <input type="file" id="ai-upload" accept="image/*" onchange="uploadImage('ai', this)">
+    </div>
+    <div class="gallery" id="ai-gallery"></div>
+  </div>
+  <div class="page" id="page-industry-storage">
+    <div class="back-bar">
+      <button class="back-btn" onclick="navigate('industry')">← 返回</button>
+      <span class="page-title">存储</span>
+    </div>
+    <div class="upload-area" onclick="document.getElementById('storage-upload').click()">
+      <div style="font-size:32px;margin-bottom:4px;">📤</div>
+      <div style="font-size:13px;color:var(--gray-90);">点击上传图片</div>
+      <input type="file" id="storage-upload" accept="image/*" onchange="uploadImage('storage', this)">
+    </div>
+    <div class="gallery" id="storage-gallery"></div>
+  </div>
+
+  <!-- ===== Footer ===== -->
+  <div style="height:40px;"></div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/aipexbase-js/dist/aipexbase.umd.min.js"></script>
+<script>
+// ===== Clock =====
+function updateClock() {
+  const now = new Date();
+  const y = now.getFullYear();
+  const M = String(now.getMonth() + 1).padStart(2,'0');
+  const d = String(now.getDate()).padStart(2,'0');
+  const h = String(now.getHours()).padStart(2,'0');
+  const m = String(now.getMinutes()).padStart(2,'0');
+  const days = ['日','一','二','三','四','五','六'];
+  document.getElementById('currentTime').innerHTML = y + '年' + M + '月' + d + '日 星期' + days[now.getDay()] + '&emsp;' + h + ':' + m;
+}
+updateClock();
+setInterval(updateClock, 10000);
+
+// ===== Navigation =====
+function navigate(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const el = document.getElementById('page-' + page);
+  if (el) el.classList.add('active');
+  window.scrollTo(0,0);
+}
+
+// ===== BaaS Config =====
+const BASE_URL = 'https://baas.kuafuai.net/baas-api';
+const API_KEY = 'baas_A3REGJzQ';
+
+// ===== Data Samples =====
+const sampleStocks = [
+  // ═══ 短期（1-3个月）：技术面活跃 + 资金驱动 + 事件催化 ═══
+  { industry: '光通信', name: '中际旭创', code: '300308.SZ', market: 'A股', horizon: '短期', reason: '全球光模块龙头，5月8日收盘涨0%报688.14元附近，成交额约240亿元。一季报净利润57.35亿元同比+262.28%，800G/1.6T高速光模块需求爆发。LightCounting上调800G和1.6T出货量预测，客户已下今年订单并规划2027年早期订单。' },
+  { industry: '光通信', name: '新易盛', code: '300502.SZ', market: 'A股', horizon: '短期', reason: '高速光模块核心供应商，5月8日大宗交易成交879万元，融资买入超40亿元。LPO方案获头部客户认可，海外收入占比提升推动毛利率改善。AI人工智能ETF第一大重仓股（占比11.57%）。' },
+  { industry: 'AI算力', name: '寒武纪', code: '688256.SH', market: 'A股', horizon: '短期', reason: '国产AI算力芯片龙头，5月8日受板块调整影响跌超5%报约1770元。5月6日获融资买入50亿元。DeepSeek首轮融资最高500亿元，国产算力需求持续爆发。但需注意短期半导体板块调整风险。' },
+  { industry: '光通信', name: '通鼎互联', code: '002491.SZ', market: 'A股', horizon: '短期', reason: '光纤光缆核心标的，5月8日2连板封涨停，股价创阶段新高。光纤产业量价齐升，G.652D单模光纤涨价至85~120元/芯公里，AI算力中心专用光纤涨幅超50%。光纤概念持续走强，昀冢科技20CM涨停。' },
+  { industry: '商业航天', name: '航天发展', code: '000547.SZ', market: 'A股', horizon: '短期', reason: '商业航天概念爆发龙头，5月8日强势涨停，电科蓝天20CM涨停带动板块走强。国内多型可重复使用火箭5月密集验证：长征十号乙、智神星一号、朱雀三号等。中信建投看好商业航天密集催化。' },
+  { industry: '机器人', name: '巨轮智能', code: '002031.SZ', market: 'A股', horizon: '短期', reason: '人形机器人概念龙头，5月8日2连板涨停，五洲新春、天奇股份、襄阳轴承跟涨。人形机器人产业化进程加速，电机绕线设备等核心零部件领域快速发展。机构看好机器人作为2026年科技主线之一。' },
+
+  // ═══ 中期（3-12个月）：基本面改善 + 行业趋势向好 + 机构持仓较高 ═══
+  { industry: '光通信', name: '天孚通信', code: '300394.SZ', market: 'A股', horizon: '中期', reason: '光器件细分龙头，一季报营收13.3亿元同比+40.82%，净利润4.92亿元同比+45.79%。FA/MT插芯等光无源器件受益于下游光模块需求拉动，产能持续扩张。硅光技术渗透率提升带动产品附加值上行。光互联板块Q1利润同比+132%。' },
+  { industry: '存储', name: '兆易创新', code: '603986.SH', market: 'A股', horizon: '中期', reason: '国内存储芯片设计龙头，NOR Flash受益于IoT/汽车电子需求增长，MCU业务回暖。DRAM产能预计2027年底只能满足全球60%需求，存储超级周期确认。全产业链涨价背景下存储是盈利先锋。5月8日半导体板块调整但存储方向仍有结构性机会。' },
+  { industry: 'AI算力', name: '工业富联', code: '601138.SH', market: 'A股', horizon: '中期', reason: 'AI服务器全球核心代工厂商，受益于北美CSP四大厂商2026年总资本开支预计7100亿美元（同比+70%+），2027年仍高增。AI服务器出货量高速增长，毛利率持续改善，机构重仓标的。瑞银研报指出AI时代服务器CPU市场规模五年接近5倍增长。' },
+  { industry: '券商', name: '东方证券', code: '600958.SH', market: 'A股', horizon: '中期', reason: '拟发行股份购买上海证券100%股权，券商行业整合加速。合并后资产规模有望突破6000亿元。华泰证券看好金融股多重共振机会，券商Q1业绩增长延续，板块PB仅1.36倍处于历史中等分位。4月出口数据超预期但关税压力仍在。' },
+  { industry: 'AI算力', name: '中国长城', code: '000066.SZ', market: 'A股', horizon: '中期', reason: '算力芯片概念龙头，国产算力替代加速推进。华为超节点下半年批量上市预期提振算力板块情绪。CPU受益于Agent加速渗透，CPU/GPU配比可能从此前的1:8提升至1:1带来需求激增。国产芯片渗透提速，2025年国产AI加速器出货占比达41%。' },
+  { industry: '医药', name: '恒瑞医药', code: '600276.SH', market: 'A股', horizon: '中期', reason: '创新药龙头，创新主线仍是医药板块重点方向。创新药产业链受益于政策支持和出海加速，行业景气度有望提升。机构持仓稳定，估值处于历史中低区间，防御属性突出。一季度医药板块有所表现，AI应用、影视院线等板块亦活跃。' },
+
+  // ═══ 长期（1年以上）：核心竞争力强 + 稳定现金流 + 行业龙头 ═══
+  { industry: 'AI算力', name: '腾讯控股', code: '00700.HK', market: '港股', horizon: '长期', reason: '中国互联网与AI应用龙头，AI云业务收入占比快速提升，资本开支持续加码。社交+游戏基本盘稳健，广告业务受益于AI驱动效率提升。豆包等国产大模型商业化加速，港股科技资产受益全球AI产业链景气上行。' },
+  { industry: '半导体', name: '中芯国际', code: '688981.SH', market: 'A股', horizon: '长期', reason: '中国大陆半导体代工龙头，先进制程持续突破，受益于国产替代加速。2026年半导体行业全产业链涨价，晶圆代工环节积极提价。AI芯片需求爆发拉动产能利用率提升，HBM3E驱动存储超级周期。中泰证券建议关注科技板块业绩高增方向。' },
+  { industry: '消费', name: '贵州茅台', code: '600519.SH', market: 'A股', horizon: '长期', reason: '白酒行业绝对龙头，品牌护城河深厚，现金流稳定充裕。消费升级长期趋势支持高端白酒需求稳定增长，高分红回报股东。市场风格再均衡下消费板块具备配置价值。无风险收益率低位背景下，居民资产再配置持续涌入权益资产。' },
+  { industry: '新能源', name: '宁德时代', code: '300750.SZ', market: 'A股', horizon: '长期', reason: '全球动力电池与储能龙头，市场份额持续领跑。AI数据中心对电力需求激增拉动储能业务增长。中信建投看好储能全球共振大趋势，累计渗透率尚不足10%。海外最大的机会来自数据中心带来的储能需求，储能将带动锂电需求增速超30%。' },
+];
+const allData = {
+  broker: [
+    { date: '2026-05-11', source: '中信建投', title: '北美四大CSP上调2026年资本开支预期，坚定看好算力产业链', summary: '北美四大CSP厂商2026Q1合计资本开支1316亿美元，同比增长70.25%，预计2026年总资本开支7100亿美元，2027年依旧高增。坚定看好AI全产业链尤其是AI算力产业链。' },
+    { date: '2026-05-11', source: '华泰证券', title: '关注外资配置视角下的三大线索', summary: 'A股情绪指数仍处"恐慌"区间，短期维持防御和低相关性资产配置，如红利、AI算力、创新药等。左侧布局赔率逐渐上升，但地缘局势明朗前不宜单边押注。' },
+    { date: '2026-05-11', source: '广发证券', title: '开启良性正循环', summary: 'AI基础设施投资加速推动产业链良性循环，光通信作为算力核心环节持续受益，硅光技术渗透率有望进一步提升。AI应用场景加速落地。' },
+    { date: '2026-05-11', source: '中信证券', title: '头部券商优势进一步巩固，关注头部及中型券商', summary: '2026Q1上市券商扣非净利润同比增长39.9%，头部券商利润集中度达74.7%，轻重资本业务占比均为46%、结构趋于均衡。关注头部及中型券商的结构性机会。' },
+    { date: '2026-05-11', source: '上海证券', title: '算力仍是市场重要投资脉络', summary: '关注AI硬科技赛道：PCB/光模块/CPO/液冷电源等。Rubin架构推升液冷散热和电源需求爆发，光纤进入强景气周期，光芯片存产能缺口。' },
+    { date: '2026-05-11', source: '中信建投', title: '坚定看好国产算力和数据要素产业趋势', summary: '2025年中国AI加速卡市场总出货量约400万张，国产份额超40%。国产模型加速突围，智谱API涨价83%仍供不应求，阿里连续发布三款重磅模型。' },
+    { date: '2026-05-11', source: '华泰证券', title: 'A股短期维持防御，中期围绕电力链和景气度逢低布局', summary: '跟踪的A股情绪指数仍处"恐慌"区间，建议控制仓位留出空间。短期维持一定防御和低相关性资产配置，如红利、AI算力、创新药等。' },
+    { date: '2026-05-11', source: '东吴证券', title: '非银金融板块平均估值较低，具有安全边际', summary: '东方证券公告拟收购上海证券100%股权，推动券商行业整合加速。非银金融板块当前估值仍处于低位，具备配置性价比。' },
+    { date: '2026-05-11', source: '华福证券', title: '创新主线仍是医药板块后续重点机会方向', summary: '医药板块后续重点关注创新主线，创新药产业链受益于政策支持和出海加速，行业景气度有望提升。' },
+    { date: '2026-05-11', source: '中信建投', title: '锂电储能板块向上信号明确，行业从通缩切入通胀周期', summary: '中信建投研报指出，电力设备和新能源行业正从通缩切入通胀周期，锂电收入同比增速一季度加速，产品价格和出货量共振，受益于储能等需求增长新动力的出现。' },
+    { date: '2026-05-11', source: '中信证券', title: '建议关注云产业链及算力租赁相关标的', summary: 'Agent应用和多模态生态爆发，资本开支与算力需求错配，云产业链进入量价齐升大年。算力租赁方面，头部厂商卡位优势突出，较高杠杆提升高增确定性。' },
+    { date: '2026-05-11', source: '中信建投', title: '2025年上市银行营收向好业绩稳定，优选基本面+高股息兼顾标的', summary: '2025年上市银行营收利润均小幅正增长，息差降幅持续收窄，中收回暖。展望2026年，营收有望继续改善，板块防御避险属性较强。' },
+    { date: '2026-05-11', source: '华泰证券', title: '看好光模块上游核心材料发展机遇', summary: '800G、1.6T光模块需求量快速提升，3.2T时代渐行渐近，看好InP衬底和薄膜铌酸锂调制器等光模块上游核心材料。InP衬底供不应求，薄膜铌酸锂有望于3.2T方案中迎来导入窗口。' },
+    { date: '2026-05-11', source: '中信建投', title: '预计2027年钠电将开启平价放量时代，重视钠电产业化放量机会', summary: '2026年碳酸锂涨价预期兑现，钠电经济性优势显现。预计头部钠电厂商2026年底实现锂钠平价，2027年开启平价放量时代。大型储能为钠电主战场，2030年市场需求有望达500GWh。' },
+    { date: '2026-05-11', source: '中信证券', title: '人形机器人放量在即，电机绕线设备快速发展', summary: '人形机器人产业化进程加速，电机绕线设备作为核心零部件相关领域有望快速发展，产业链相关标的值得关注。' },
+    { date: '2026-05-11', source: '华泰证券', title: '看好金融股多重共振机会', summary: '证券板块Q1业绩增长延续，政策暖风提振市场预期，估值仓位双低位，把握多重逻辑共振修复机会。银行股息配置价值仍高，保险一季度估值调整后配置价值凸显。' },
+    // 2026-05-11新增
+    { date: '2026-05-11', source: '中信建投', title: '国产算力供需两旺，算力通胀持续，继续看好算力与商业航天板块', summary: 'DeepSeek首轮融资规模最高500亿元，核心用于补充算力资源。豆包Token消耗量从60万亿/天提升至120万亿/天。国产芯片渗透提速，CPU/GPU配比或从1:8提升至1:1带来CPU需求激增。商业航天方面，长征十号乙火箭、智神星一号、朱雀三号等密集催化。' },
+    { date: '2026-05-11', source: '中信建投', title: 'AI算力与商业航天迎来产业加速期，Agent重构计算基础设施', summary: 'Agent推动计算负载从GPU密集转向CPU密集，CPU/GPU配比有望大幅提升。AI算力需求爆发叠加内存涨价及产能紧张推动服务器CPU缺货涨价。大模型推理降本驱动巨头加速布局ASIC。多型可重复使用火箭密集验证，卫星互联网组网全面加速。' },
+    { date: '2026-05-11', source: '华泰证券', title: '以波段思维应对密集事件窗口，AI链内部再平衡', summary: 'A股情绪修复动能出现边际放缓。建议以波段思维应对密集事件窗口，适度降低仓位。AI链维持中期超配但内部再平衡，由半导体向锂电/储能等切换；增配景气上修的铜/铝及化工品。' },
+    { date: '2026-05-11', source: '上证报', title: '5月A股有望延续震荡向上格局，聚焦科技与资源两大高景气主线', summary: '五一假期后A股迎来开门红，双创指数强势领涨。券商研报判断5月A股有望延续震荡向上，短期休整不改中期上行趋势。受益于全球AI算力需求爆发及一季度业绩兑现，A股科技与资源两大高景气主线得到进一步确认。' },
+  ],
+  kol: [
+    { date: '2026-05-11', source: '申万宏源策略', title: '2026年三大结构线索：复苏交易、科技产业趋势、制造业影响力提升', summary: '关注三大线索：一是复苏交易涵盖周期阿尔法（化工/工业金属等）；二是科技产业趋势涵盖AI产业链和机器人/储能/光伏；三是制造业影响力提升包括化工/工程机械等。' },
+    { date: '2026-05-11', source: '东吴证券芦哲', title: '恒生科技4月复盘及5月展望', summary: '5月恒生科技或延续"技术修复延续、反弹收益可期"格局，地缘冲突缓和及权重股调整带来结构优化和资金调仓预期，重点关注阿里等AI业务进展。' },
+    { date: '2026-05-11', source: '股市女神', title: '5月7日复盘：新高不断下明日应对策略', summary: '沪指继续新高收4160点，日线双指标多头。两市成交3.23万亿。算力芯片/存储芯片/商业航天概念走高。周kdj试图金叉，预计明日还有震荡上攻前高预期。' },
+    { date: '2026-05-11', source: '财联社', title: '陆家嘴财经早餐：科技叙事激活市场情绪', summary: 'A股5月"开门红"，科技叙事激活市场情绪。寒武纪大涨再创新高。Anthropic与SpaceX签署300兆瓦算力协议。DeepSeek估值或达450亿美元。' },
+    { date: '2026-05-11', source: '中泰证券', title: 'A股市场风格进入再均衡而非切换', summary: '2026年度A股市场风格进入再均衡而非切换。政策与技术双轮驱动，光伏产业迈向高质量发展。AI应用落地和国产大模型加速验证。' },
+    { date: '2026-05-11', source: '财联社', title: '5月8日券商晨会精华：锂电储能板块向上信号明确', summary: '华泰证券认为3月出口强劲突显中国化工供应优势；中信建投认为锂电储能板块向上信号明确，行业从通缩切入通胀周期；中泰证券认为零食景气仍在，渠道结构分化。' },
+    { date: '2026-05-11', source: '证券之星', title: '机构策略：A股市场科技主线延续，军工AI硬件走强', summary: '科技成长方向延续强势，军工、AI硬件端集体走强，CPO、铜缆高速连接方向反弹。全市场超3800只个股上涨，沪指三连涨。机构认为科技或成短期行业配置主线。' },
+    { date: '2026-05-11', source: '东方财富财富号', title: '5月8日早报：反转再反转，今天注意节奏！', summary: '美科技股分化强震，存储芯片和光通信板块跳水，A股今天大概率难以延续强势逼空。可多留意低位启动的方向如AI应用及地产方向。近期科技一直涨，需注意节奏，逢低关注新机会。' },
+    { date: '2026-05-11', source: '财联社', title: '5月8日投资避雷针：12天10板金螳螂提示风险，中东局势升温', summary: '金螳螂公告仅承接少量商业航天发射场配套工程及数据中心施工项目。越剑智能提示智能验布机收入不足百万元。中东紧张局势再度升温，美军对伊朗军事设施实施定点打击，美股高开低走集体收跌。' },
+    { date: '2026-05-11', source: '网易', title: '今日A股市场重要快讯：中东局势升温，AI硬件行情继续演绎', summary: '美国对伊朗军事设施实施定点打击，地缘冲突担忧推动资金涌入避险资产，黄金原油价格波动加剧。OpenAI高管备忘录显示博通要求微软购买约40%芯片才为其提供资金。AI硬件行情继续演绎，资金聚焦科技成长方向。' },
+    // 2026-05-11新增
+    { date: '2026-05-11', source: '东方财富财富号', title: '股市随想录——5月11日核心观察：新热点VS老主线的博弈', summary: '核心观察顺序：新热点（商业航天、机器人）开盘强度与持续性→老主线（半导体/AI）在外围利好下的修复力度→市场整体量能是否配合放大。操作策略：不追高新热点，关注换手后核心品种；调整到位的科技老主线逢低布局；持股冲高减仓做高低切换。' },
+    { date: '2026-05-11', source: '网易订阅', title: 'A股：做好准备了，5月11日盘面运行节奏分析', summary: '市场做多情绪占据主导，百股涨停格局明显。大盘短期核心看点在于能否站稳4180点，突破后向4200点冲击。中期上行趋势根基稳固，基本面并无明显利空隐患。两市赚钱效应持续提升，成交额连续3日突破3万亿。' },
+    { date: '2026-05-11', source: '东方财富财富号', title: '释放明确信号：大盘站稳60日线，5月11日迎来新转变', summary: '大盘延续节前稳步震荡上行趋势，站稳60日线。机器人板块持续走强，商业航天和电力板块反弹，半导体和CPO概念高位震荡。大盘自3794点企稳反弹，一个多月上涨超390点，短期仍有走强基础。' },
+  ],
+  industry: [
+    { date: '2026-05-11', source: '华泰证券', title: '通信行业：GTC及OFC2026聚焦AI算力，光通信为核心环节', summary: '伴随AI生态加速构建和Agent持续爆发，光通信已成为AI算力基础设施核心环节。光模块/光纤光缆/液冷等方向持续受益，硅光凭借低功耗优势渗透率提升。' },
+    { date: '2026-05-11', source: '国盛证券', title: '光通信行业深度：AI算力驱动的超级景气周期', summary: '光通信行业处于AI驱动的超级景气周期，800G/1.6T光模块需求量快速提升，3.2T时代渐行渐近。头部企业在全球化交付、技术平台化布局上持续受益。' },
+    { date: '2026-05-11', source: '天风证券', title: 'AI算力产业链：算力租赁与国产算力共振', summary: '腾讯云年内第三次官宣涨价，印证算力供需缺口持续扩大。国产算力发展加速，华为超节点下半年批量上市，国产算力将迎来真正可用拐点。' },
+    { date: '2026-05-11', source: '证券时报', title: '半导体行业涨价潮影响见端倪，存储是"盈利先锋"', summary: '2026年以来半导体行业全产业链涨价，上游材料、晶圆代工、封装环节纷纷提价。存储行业受益明显成"盈利先锋"，功率半导体业绩分化。约八成上市公司成本同比增加。' },
+    { date: '2026-05-11', source: '中信证券', title: '存储芯片行业深度：HBM3E驱动存储超级周期', summary: '存储芯片板块持续爆发，德明利、江波龙、朗科科技涨停。海外存储龙头美光科技、海力士、三星电子持续创新高。DRAM产能预计到2027年底只能满足全球60%需求。' },
+    { date: '2026-05-11', source: '银河证券', title: '商业航天迎来政策催化，卫星物联网商用试验获批', summary: '工信部批复国电高科开展卫星物联网商用试验，试验期两年。商业航天概念表现活跃，西部材料、润贝航科双双2连板。卫星互联网产业迎来政策催化窗口。' },
+    { date: '2026-05-11', source: '国泰君安', title: 'AI算力产业链：从芯片到应用的全面繁荣', summary: '从GPU、交换机到服务器代工、液冷散热，AI算力全产业链进入高景气周期。国产化替代是核心主线。算力芯片概念拉升，海光信息触及20cm涨停创新高。' },
+    { date: '2026-05-11', source: '兴业证券', title: '国内AI硬件产业链有望成为结构性亮点', summary: 'AI应用场景加速落地，OpenAI宣布2026年投入500亿美元用于算力建设，豆包开启付费计划。国内AI硬件产业链有望成为结构性亮点，算力租赁概念爆发。' },
+    { date: '2026-05-11', source: '东方证券', title: 'AI算力建设需求持续高增，关注光通信等核心环节', summary: '英伟达财报营收超预期，海内外云厂商持续加强资本开支。LightCounting上调800G和1.6T光模块出货量预测。CPO技术研发突破有望进一步带动800G和1.6T需求及渗透率提升。把握AI算力产业链和空地一体化双核心主线。' },
+    { date: '2026-05-11', source: '世纪证券', title: 'AI驱动全球光通信景气度攀升，细分环节需求激增', summary: 'AI驱动光通信景气持续攀升，供需仍然偏紧。看好国内光通信供应链参与度和价值分配双升。波分复用系统核心元件滤光片需求弹性放大，供给刚性约束下成为光器件中新的紧缺品种。' },
+    { date: '2026-05-11', source: '东兴证券', title: '光通信板块实质性进入利润兑现黄金期', summary: '2025年光互联板块营收同比增长63%，归母净利润同比增长122%。2026年一季度光互联板块营收415亿元同比+98%，归母净利润105亿元同比+132%。预付账款规模同比扩大超3倍，存货达历史最高水平447亿元。' },
+    { date: '2026-05-11', source: '华西证券', title: '光通信和光纤光缆企业集中进入利润兑现阶段', summary: '在AI算力拉动下，光通信企业加速进入现金流和利润质量修复期。企业加大现金收款力度，加速备货与扩产，头部企业计划赴港上市融资为后续产能扩建提供现金流支撑。' },
+    { date: '2026-05-11', source: '瑞银证券', title: 'AI服务器CPU市场规模五年有望接近5倍增长', summary: 'Lumentum总裁表示订单已排至2028年，印证光通信行业高景气度。字节跳动豆包启动付费订阅测试，AI商业化加速进一步拉动算力基础设施需求。AI时代服务器CPU市场规模五年有望接近5倍增长。' },
+    { date: '2026-05-11', source: '光大证券', title: 'AI算力革命下光通信市场开启"超级周期"', summary: '光纤价格暴涨：G.652D单模光纤从20元/芯公里飙升至85~120元/芯公里，涨幅372%~650%。AI算力中心专用G.654.E超低损耗光纤涨幅超50%。光纤指数年初至今累计上涨88.6%。行业迎来量价齐升黄金窗口期。' },
+    // 2026-05-11新增
+    { date: '2026-05-11', source: '中信建投', title: '国产算力供需两旺，算力通胀持续，商业航天密集催化', summary: 'DeepSeek首轮融资规模最高500亿元，豆包Token消耗量翻倍。国产AI加速器芯片出货占比达41%。CPU受益于Agent加速渗透，配比大幅提升。商业航天催化剂包括5月中下旬长征十号乙首飞、星河动力智神星一号、蓝箭朱雀三号一级回收挑战等。' },
+    { date: '2026-05-11', source: '中信建投', title: 'AI算力与商业航天产业加速，Agent重构计算基础设施', summary: 'Agent推动数据中心从GPU密集到CPU密集，CPU/GPU配比大幅提升。AI算力需求叠加产能紧张推动CPU涨价缺货。大模型推理降本驱动巨头加速布局ASIC，行业走向异构协同。多型可重复使用火箭密集验证，卫星互联网组网全面加速。' },
+    { date: '2026-05-11', source: '光大证券', title: 'AI算力革命下光通信市场开启超级周期，光互联板块进入利润兑现黄金期', summary: '2026年一季度光互联板块营收415亿元同比+98%，归母净利润105亿元同比+132%。预付账款规模同比扩大超3倍，存货达历史最高水平447亿元。G.652D光纤价格暴涨至85~120元/芯公里，光纤指数年初至今累计上涨88.6%。' },
+  ],
+};
+const sampleLimits = [
+  { name: '金螳螂', code: '002081', pct: '+10.02%', boards: '12天10板/5连板', reason: '商业航天+半导体洁净室概念高标龙头', inflow: '3.8亿' },
+  { name: '中国长城', code: '000066', pct: '+10.01%', boards: '3连板', reason: '算力芯片概念龙头，国产替代主线', inflow: '5.81亿' },
+  { name: '通鼎互联', code: '002491', pct: '+10.02%', boards: '首板', reason: '光纤光缆量价齐升+5G光纤概念', inflow: '3.0亿' },
+  { name: '武汉凡谷', code: '002194', pct: '+10.00%', boards: '首板', reason: '通信射频器件+AI算力配套', inflow: '2.1亿' },
+  { name: '海光信息', code: '688041', pct: '+20.00%', boards: '首板(20cm)', reason: '国产GPU龙头触及20cm涨停创新高', inflow: '15.2亿' },
+    { date: '2026-05-12', source: '中信证券', title: '预计美国CPI同比增速将在3月和4月走高', summary: '美国2月CPI全面符合预期，核心通胀表现温和。预计美国CPI同比增速将在3月和4月走高。央行下调各类再贷款工具利率25bps，但该举措并非传统意义上的逆回购利率或LPR降息，而是通过结构性工具定向发力，有利于提升银行投放积极性。' },
+    { date: '2026-05-12', source: '中信建投', title: '持续推荐全球缺电产业链，AI电力需求成为核心驱动', summary: '2026年开始北美AI电力需求将首次超过常规负荷增量，成为影响北美电力需求的最核心因素。预计北美2026-2028年燃机交付合计60-66GW，与同期AI电力需求152GW相距甚远。全球燃机订单仍具上行动力，有望提升至100GW以上。' },
+    { date: '2026-05-12', source: '中金公司', title: '对主动权益基金超额收益延续性持谨慎乐观态度', summary: '展望2026年，中金对主动权益基金超额收益延续性持谨慎乐观态度。新兴产业趋势不断涌现、行业轮动持续加速，为主动管理提供结构性超额空间；增量资金入市可期，存量赎回压力边际收窄。' },
+    { date: '2026-05-12', source: '中信证券', title: '判断2026年中国出口仍会维持较高景气度', summary: '今年4月出口增速高于前值和预期，反映出外贸出口整体仍保持较强韧性。判断2026年中国出口仍会维持较高景气度，AI算力需求带动半导体出口亮眼。' },
+    { date: '2026-05-12', source: '银河证券', title: '市场围绕地缘冲突与国内基本面修复持续博弈', summary: '市场或将围绕外部地缘冲突反复、国内基本面修复以及后续政策预期持续博弈。TMT与中游制造是修复的主攻方向，半导体、通信设备、航海装备、电池等板块表现较优。' },
+    { date: '2026-05-12', source: '上海证券报', title: '两融余额突破2.8万亿元，部分券商增设115%即时平仓线', summary: '两融余额突破2.8万亿元，部分券商增设115%即时平仓线。中芯国际406亿元并购重组过会，系科创板史上最大并购重组案。A股资产备受基金青睐，"专业买手"连续加仓6个月。' },
+    { date: '2026-05-12', source: '中信证券', title: '中芯国际并购重组过会，关注半导体整合逻辑', summary: '中芯国际406亿元并购重组过会，系科创板史上最大并购重组案。半导体行业整合加速，龙头公司在先进制程和产能布局上持续突破，有望进一步巩固市场地位。' },
+    { date: '2026-05-12', source: '海西一狼', title: '5月12日早盘重要财经资讯汇总', summary: '美股三大指数均小幅收涨，存储芯片股继续上涨，高通涨超8%，美光科技涨超6%创新高。富时A50期指收涨0.40%。4月CPI同比上涨1.2%，PPI同比涨幅扩大至2.8%。新能源汽车4月销量占比53.2%。韩国监管机构对股市过热及融资融券余额扩大表达担忧。' },
+    { date: '2026-05-12', source: '涨跌都不慌', title: '2026年5月A股收盘股评：五月狂潮超预期，科技革命重塑市场逻辑', summary: '五月的A股正以超预期的狂潮重塑市场认知。这不是一场昙花一现的炒作，而是科技革命驱动的长期范式转换。投资者需摒弃"路径依赖"，拥抱时代逻辑，在主线赛道上以精准择时把握阿尔法机会。' },
+    { date: '2026-05-12', source: '东方财富财富号', title: '2026年5月策略观点：关注基本面的确定性', summary: '市场风格或偏向成长，五维行业比较框架打分靠前的行业分别为国防军工、计算机、电子、有色金属、机械设备、电力设备。港股维持"杠铃策略"：防御端以高股息板块为底仓，进攻端聚焦半导体设备、AI算力、电力电网等硬科技成长主线。' },
+    { date: '2026-05-12', source: '申万宏源', title: '光互连成为提升AI算力上限重要演进方向', summary: '网络设备正从传统的800G向1.6T速率跃升，光互连成为提升AI算力上限的重要演进方向，将显著提升光通信在AI算力链中的价值量。Lumentum预测到2030年AI光通信总潜在市场从2025年180亿美元飙升至900亿美元。' },
+    { date: '2026-05-12', source: '国信证券', title: '光通信持续高景气为AI算力互联铺路', summary: 'ASIC芯片出货量持续加大，预计2026年全球800G光模块有望达4000万只，1.6T光模块有望超过700万只。CPO/铜背板/OCS/OIO/DCI等新技术未来可期。2029年CPO渗透率有望达50%，OCS市场规模有望超16亿美元。' },
+    { date: '2026-05-12', source: '浦银国际', title: '科技行业2026年展望：AI算法迭代扩容算力底座', summary: 'AI底层技术处于飞轮迭代阶段，将持续推动多产业链基本面增长。AI将持续推动中美两国云服务厂商、服务器、算力、端侧AI、新能源车等多环节商业化落地。AI应用加速落地，C端AI助手、B端生产力工具、G端AI普及全面开花。' },
+    { date: '2026-05-12', source: '浦银国际', title: 'AI算力军备竞赛推动光模块与硅光技术成为核心受益环节', summary: 'AI算力军备竞赛推动数据中心网络进入超高速、超高密度、超低功耗时代，光模块与硅光技术成为核心受益环节。CPO、OCS、OIO等新技术将开启下一轮互联架构变革。Micro LED技术应用于光互连有望突破通信瓶颈。' },
+  ];
+const sampleInflow = [
+  { name: '寒武纪', code: '688256', inflow: '35.2亿', pct: '+4.83%' },
+  { name: '中际旭创', code: '300308', inflow: '28.1亿', pct: '+11.07%' },
+  { name: '新易盛', code: '300502', inflow: '24.5亿', pct: '+9.33%' },
+  { name: '海光信息', code: '688041', inflow: '15.2亿', pct: '+20.00%' },
+  { name: '工业富联', code: '601138', inflow: '12.8亿', pct: '+5.67%' },
+  { name: '天孚通信', code: '300394', inflow: '11.5亿', pct: '+6.22%' },
+  { name: '东方财富', code: '300059', inflow: '9.8亿', pct: '+3.45%' },
+  { name: '兆易创新', code: '603986', inflow: '8.6亿', pct: '+4.12%' },
+  { name: '中兴通讯', code: '000063', inflow: '7.3亿', pct: '+3.89%' },
+  { name: '紫金矿业', code: '601899', inflow: '6.2亿', pct: '+2.56%' },
+];
+const sampleLadder = [
+  { level: '5连板', stocks: ['金螳螂 002081'], desc: '商业航天+洁净室概念' },
+  { level: '3连板', stocks: ['中国长城 000066'], desc: '算力芯片概念龙头' },
+  { level: '2连板', stocks: ['西部材料', '润贝航科'], desc: '商业航天概念' },
+  { level: '首板', stocks: ['通鼎互联', '武汉凡谷', '海光信息(20cm)', '德明利', '江波龙'], desc: '光通信+算力芯片+存储' },
+];
+const sampleLH = [
+  { name: '中际旭创', type: '净买入', amount: '6.3亿', reason: '机构+深股通大额买入，三日累计净买入12.8亿' },
+  { name: '海光信息', type: '净买入', amount: '5.1亿', reason: '机构主导+游资助攻，20cm涨停创历史新高' },
+  { name: '新易盛', type: '净买入', amount: '4.8亿', reason: '机构+深股通买入，短期涨幅过大需注意追高风险' },
+  { name: '寒武纪', type: '净买入', amount: '3.2亿', reason: '机构分歧较大，买方集中度高于卖方' },
+  { name: '金螳螂', type: '净卖出', amount: '2.1亿', reason: '游资出货明显，高标龙头波动加大注意见顶风险' },
+];
+
+// ===== 盘前必读数据 =====
+const sampleOverseas = [
+  { label: '纳斯达克', value: '26247.08', pct: '+1.71%', dir: 'up' },
+  { label: '标普500', value: '7398.93', pct: '+0.84%', dir: 'up' },
+  { label: '道琼斯', value: '49609.16', pct: '+0.02%', dir: 'up' },
+  { label: '恒生指数', value: '26393.71', pct: '-0.87%', dir: 'down' },
+  { label: '恒生科技', value: '4969.58', pct: '-1.05%', dir: 'down' },
+  { label: 'WTI原油', value: '99.37', pct: '+3.76%', dir: 'up' },
+  { label: '布伦特原油', value: '104.11', pct: '+3.15%', dir: 'up' },
+  { label: '日经225', value: '63373.15', pct: '+1.00%', dir: 'up' },
+  { label: '韩国综指', value: '7872.84', pct: '+5.00%', dir: 'up' },
+  { label: '伦敦金', value: '4685.02', pct: '-0.08%', dir: 'down' },
+  { label: '美元指数', value: '100.31', pct: '+0.17%', dir: 'up' },
+  { label: 'VIX恐慌', value: '17.94', pct: '+0.62%', dir: 'up' },
+];
+
+const sampleCalendar = [
+  { label: '新股上市', value: '春光集团(301531)、长裕集团(603407)' },
+  { label: '数字教育', value: '世界数字教育大会在杭州举行(5/11-13)' },
+  { label: '茅台说明会', value: '贵州茅台召开业绩说明会' },
+  { label: '中芯国际', value: '并购重组委审核发行股份购资产事项' },
+  { label: 'CPI/PPI', value: '中国4月CPI及PPI数据公布' },
+  { label: '港股上市', value: '乐动机器人港交所主板挂牌上市' },
+  { label: '特朗普访华', value: '特朗普5/13-15对中国进行国事访问' },
+  { label: '期货仿真', value: '上期所开展市价指令仿真交易(5/11-22)' },
+];
+
+const sampleAnnouncements = [
+  { tag: '宏观', source: '外交部', title: '应习近平主席邀请，美国总统特朗普将于5月13日至15日对中国进行国事访问。', color: '#c0392b' },
+  { tag: '宏观', source: '新华社', title: '天舟十号货运飞船发射任务取得圆满成功。', color: '#c0392b' },
+  { tag: '国际', source: '新华社', title: '伊朗公布回应美方要点，要求美国30天内撤销对伊石油制裁。WTI原油早盘涨超4%突破99美元。', color: '#e67e22' },
+  { tag: '行业', source: '同花顺', title: '中信证券：判断2026年中国出口仍维持较高景气度，AI算力需求带动半导体出口亮眼。', color: '#2980b9' },
+  { tag: '行业', source: '东吴证券', title: '国产算力趋势不可逆，AI信创形成五大核心主线：GPU芯片/CPU芯片/昇腾产业链/算力租赁/信创大模型。', color: '#2980b9' },
+  { tag: '行业', source: '每经', title: '浙江人形与杰克科技签约2000台服装场景人形机器人，产业落地加速。', color: '#2980b9' },
+  { tag: '行业', source: '河北工信厅', title: '现代化钢铁产业2026年重点工作清单印发，突破25项关键技术、研发30个以上新品种。', color: '#7f8c8d' },
+  { tag: '市场', source: '交易所', title: '5月8日两市融资余额27735.28亿元，较上日增加158.05亿元。', color: '#27ae60' },
+];
+
+const sampleCompare = [
+  {
+    topic: 'A股节后走势判断',
+    bull: { source: '上证报', view: '5月A股有望延续震荡向上格局，短期休整不改中期上行趋势，科技与资源两大高景气主线得到确认。' },
+    bear: { source: '华泰证券', view: 'A股情绪修复动能出现边际放缓，建议以波段思维应对密集事件窗口，适度降低仓位。' }
+  },
+  {
+    topic: 'AI算力产业链',
+    bull: { source: '中信建投', view: '国产算力供需两旺，算力通胀持续，Agent推动CPU/GPU配比大幅提升，继续看好算力板块。' },
+    bear: { source: '中金公司', view: '行情从普涨进入分化阶段，存储和光模块"瓶颈环节"领涨，云厂商跑输指数，定价转向对盈利兑现更敏感的阶段。' }
+  },
+];
+
+const sampleRotation = {
+  gainers: [
+    { name: '商业航天', pct: '+4.32%', reason: '金螳螂12天10板，电科蓝天20CM涨停，长征十号乙、智神星一号、朱雀三号密集催化' },
+    { name: '人形机器人', pct: '+3.18%', reason: '浙江人形签约2000台，电机绕线设备快速发展，巨轮智能2连板，五洲新春跟涨' },
+    { name: '北证50', pct: '+2.24%', reason: '北交所独立性行情延续，新股申购热度高，嘉晨智能、锐翔智能上市在即' },
+    { name: '光纤概念', pct: '+2.12%', reason: 'G.652D光纤暴涨至120元/芯公里，通鼎互联涨停，光纤指数年初迄今涨88.6%' },
+    { name: '通信设备', pct: '+1.86%', reason: '武汉凡谷涨停，5G+AI算力配套需求提升，通信射频器件景气上行' },
+  ],
+  losers: [
+    { name: 'AI算力(科创板)', pct: '-1.85%', reason: '科创综指回调1.25%，寒武纪跌超5%，前期涨幅过大获利盘兑现' },
+    { name: '半导体设备', pct: '-1.20%', reason: '光刻胶、半导体设备板块调整，中微公司、北方华创走弱' },
+    { name: '光伏设备', pct: '-0.65%', reason: '多晶硅期货跌超3%，光伏产业链价格持续承压，市场关注过剩产能出清节奏' },
+    { name: '有色金属', pct: '-0.52%', reason: '沪金、沪锡跌超1%，国际金价震荡走弱，短期避险资金流入减少' },
+    { name: '锂电', pct: '-0.48%', reason: '受高盛研报影响锂电板块调整，但中信建投认为行业从通缩切入通胀周期信号明确' },
+  ],
+};
+
+// ===== Render New Feature Pages =====
+function renderNewFeatures() {
+  renderOverseas();
+  renderCalendar();
+  renderAnnouncements();
+  renderCompare();
+  renderRotation();
+  renderAfterHours();
+}
+
+function renderOverseas() {
+  var el = document.getElementById('premarket-overseas');
+  var h = '<div class="overseas-grid">';
+  sampleOverseas.forEach(function(item) {
+    h += '<div class="overseas-card"><span class="overseas-label">' + item.label + '</span><span class="overseas-value ' + item.dir + '">' + item.value + ' ' + item.pct + '</span></div>';
+  });
+  h += '</div>';
+  h += '</div>';
+  el.innerHTML = h;
+}
+
+function renderCalendar() {
+  var el = document.getElementById('premarket-calendar');
+  var h = '<div class="calendar-grid">';
+  sampleCalendar.forEach(function(item) {
+    h += '<div class="calendar-card"><div class="cal-label">' + item.label + '</div><div class="cal-value">' + item.value + '</div></div>';
+  });
+  h += '</div>';
+  el.innerHTML = h;
+}
+
+function renderAnnouncements() {
+  var el = document.getElementById('premarket-announcements');
+  var h = '';
+  sampleAnnouncements.forEach(function(item) {
+    h += '<div class="ann-item"><div><span class="ann-tag" style="background:' + item.color + '20;color:' + item.color + ';border:1px solid ' + item.color + '40;">' + item.tag + '</span><span class="ann-source" style="color:' + item.color + ';">' + item.source + '</span></div><div class="ann-title">' + item.title + '</div></div>';
+  });
+  h += '</div>';
+  el.innerHTML = h;
+}
+
+function renderCompare() {
+  var el = document.getElementById('premarket-compare');
+  var h = '';
+  sampleCompare.forEach(function(item) {
+    h += '<div class="compare-card"><div class="compare-topic">' + item.topic + '</div><div class="compare-views"><div class="compare-side bull"><div class="compare-header"><span class="bull-label">看多</span> . ' + item.bull.source + '</div><div class="compare-text">' + item.bull.view + '</div></div><div class="compare-side"><div class="compare-header"><span class="bear-label">看空</span> . ' + item.bear.source + '</div><div class="compare-text">' + item.bear.view + '</div></div></div></div>';
+  });
+  h += '</div>';
+  el.innerHTML = h;
+}
+
+function renderRotation() {
+  var gainEl = document.getElementById('rotation-gainers');
+  var h = '';
+  sampleRotation.gainers.forEach(function(g) {
+    var pctVal = parseFloat(g.pct);
+    var barW = Math.min((pctVal / 5) * 100, 100);
+    h += '<div class="rot-card"><div class="rot-hdr"><span class="rot-name">' + g.name + '</span><span class="rot-pct up">' + g.pct + '</span></div><div class="rot-bar-wrap"><div class="rot-bar up" style="width:' + barW + '%;"></div></div><div class="rot-reason">' + g.reason + '</div></div>';
+  });
+  gainEl.innerHTML = h;
+
+  var loseEl = document.getElementById('rotation-losers');
+  h = '';
+  sampleRotation.losers.forEach(function(l) {
+    var pctVal = Math.abs(parseFloat(l.pct));
+    var barW = Math.min((pctVal / 2) * 100, 100);
+    h += '<div class="rot-card"><div class="rot-hdr"><span class="rot-name">' + l.name + '</span><span class="rot-pct down">' + l.pct + '</span></div><div class="rot-bar-wrap"><div class="rot-bar down" style="width:' + barW + '%;"></div></div><div class="rot-reason">' + l.reason + '</div></div>';
+  });
+  loseEl.innerHTML = h;
+}
+
+function renderAfterHours() {
+  var limitEl = document.getElementById('afterhours-limits');
+  var h = '';
+  sampleLimits.forEach(function(item) {
+    h += '<div class="ah-card"><div class="ah-hdr"><div><span class="ah-name">' + item.name + '</span><span class="ah-code"> ' + item.code + '</span></div><span class="ah-pct">' + item.pct + '</span></div><div class="ah-meta">' + item.boards + ' · 流入' + item.inflow + '</div><div class="ah-reason">' + item.reason + '</div></div>';
+  });
+  limitEl.innerHTML = h;
+
+  var inflowEl = document.getElementById('afterhours-inflow');
+  h = '';
+  sampleInflow.forEach(function(item, i) {
+    h += '<div class="rank-item"><div class="rank-num' + ((i<3) ? ' top3' : '') + '">' + (i+1) + '</div><span class="rank-name">' + item.name + '</span><span class="rank-code">' + item.code + '</span><span class="rank-pct up">' + item.pct + '</span><span class="rank-amount">' + item.inflow + '</span></div>';
+  });
+  inflowEl.innerHTML = h;
+
+  var ladderEl = document.getElementById('afterhours-ladder');
+  h = '';
+  sampleLadder.forEach(function(item) {
+    h += '<div class="ladder-card"><div class="ladder-level">' + item.level + '</div><div class="ladder-stocks">' + item.stocks.join(', ') + '</div><div class="ladder-desc">' + item.desc + '</div></div>';
+  });
+  ladderEl.innerHTML = h;
+
+  var lhEl = document.getElementById('afterhours-lh');
+  var h = '';
+  sampleLH.forEach(function(item) {
+    var buyColor = (item.type === '净买入') ? '#e74c3c' : '#27ae60';
+    h += '<div class="lh-card"><div class="lh-hdr"><span class="lh-name">' + item.name + '</span><span class="' + ((item.type==='净买入') ? 'lh-type-buy' : 'lh-type-sell') + '">' + item.type + ' ' + item.amount + '</span></div><div class="lh-reason">' + item.reason + '</div></div>';
+  });
+  lhEl.innerHTML = h;
+}
+
+// ===== Date helpers =====
+const TODAY = new Date().toISOString().slice(0,10);
+
+function getDates() {
+  const dates = [];
+  const all = [...sampleStocks.map(s => '2026-05-11'), ...allData.broker.map(r => r.date), ...allData.kol.map(r => r.date), ...allData.industry.map(r => r.date)];
+  [...new Set(all)].sort().reverse().forEach(d => { if (!dates.includes(d)) dates.push(d); });
+  return dates;
+}
+const ALL_DATES = getDates();
+
+// ===== Search & Filter for Investments =====
+function searchInvestments() {
+  const q = (document.getElementById('invest-search-input').value || '').trim().toLowerCase();
+  const indEl = document.getElementById('invest-filter-industry');
+  const mktEl = document.getElementById('invest-filter-market');
+  const horEl = document.getElementById('invest-filter-horizon');
+  const industry = indEl ? indEl.value : '';
+  const market = mktEl ? mktEl.value : '';
+  const horizon = horEl ? horEl.value : '';
+
+  const el = document.getElementById('investment-list');
+  el.innerHTML = '';
+  let items = [...sampleStocks];
+  if (q) items = items.filter(s => s.name.toLowerCase().includes(q) || s.code.toLowerCase().includes(q) || s.industry.toLowerCase().includes(q) || s.reason.toLowerCase().includes(q));
+  if (industry) items = items.filter(s => s.industry === industry);
+  if (market) items = items.filter(s => s.market === market);
+  if (horizon) items = items.filter(s => s.horizon === horizon);
+
+  const cntEl = document.getElementById('invest-result-count');
+  if (cntEl) cntEl.textContent = items.length > 0 ? `共 ${items.length} 条结果` : items.length === 0 && sampleStocks.length > 0 ? '未找到匹配结果' : '';
+
+  const tags = { '短期':'tag-short', '中期':'tag-mid', '长期':'tag-long' };
+  items.forEach(s => {
+    el.innerHTML += `
+      <div class="stock-item">
+        <div class="stock-hdr">
+          <div><span class="stock-name">${s.name}</span><span class="stock-code"> ${s.code}</span></div>
+          <span class="tag-market">${s.market}</span>
+        </div>
+        <div class="stock-meta">
+          ${s.industry} · <span class="${tags[s.horizon]}">${s.horizon}</span>
+        </div>
+        <div class="stock-reason">${s.reason}</div>
+      </div>
+    `;
+  });
+}
+
+// ===== Search & Filter for Reports =====
+function searchReports(type) {
+  const q = (document.getElementById(type + '-search-input').value || '').trim().toLowerCase();
+  const el = document.getElementById('report-' + type + '-list');
+  el.innerHTML = '';
+  let items = [...allData[type]];
+  if (q) items = items.filter(r => r.source.toLowerCase().includes(q) || r.title.toLowerCase().includes(q) || r.summary.toLowerCase().includes(q));
+  const sorted = items.sort((a, b) => b.date.localeCompare(a.date));
+
+  const cntEl = document.getElementById(type + '-result-count');
+  if (cntEl) cntEl.textContent = sorted.length > 0 ? `共 ${sorted.length} 条结果` : sorted.length === 0 && allData[type].length > 0 ? '未找到匹配结果' : '';
+
+  sorted.forEach(r => {
+    el.innerHTML += `
+      <div class="report-item">
+        <div class="report-source">${r.date} · 来源：<span class="report-source-name">${r.source}</span></div>
+        <div class="report-title">${r.title}</div>
+        <div class="report-summary">${r.summary}</div>
+      </div>
+    `;
+  });
+}
+
+// ===== History Date Navigation =====
+function renderHistoryBar(type) {
+  const bar = document.getElementById('history-bar-' + type);
+  if (!bar) return;
+  bar.innerHTML = '';
+  // Show today and recent dates
+  const dates = ALL_DATES.slice(0, 10);
+  dates.forEach(d => {
+    const btn = document.createElement('div');
+    btn.className = 'history-date' + (d === TODAY ? ' today' : '') + (d === ALL_DATES[0] ? ' selected' : '');
+    // Format display: M/D 周X
+    const dt = new Date(d + 'T00:00:00');
+    const days = ['日','一','二','三','四','五','六'];
+    btn.textContent = (dt.getMonth()+1) + '/' + dt.getDate() + ' 周' + days[dt.getDay()];
+    btn.dataset.date = d;
+    btn.onclick = function() {
+      bar.querySelectorAll('.history-date').forEach(b => b.classList.remove('selected'));
+      this.classList.add('selected');
+      filterByDate(type, this.dataset.date);
+    };
+    bar.appendChild(btn);
+  });
+}
+
+function filterByDate(type, date) {
+  if (type === 'investment') {
+    const el = document.getElementById('investment-list');
+    el.innerHTML = '';
+    let items = sampleStocks.filter(s => s.date === date || !date);
+    if (date && items.length === 0) {
+      // Try loading from snapshot
+      loadSnapshotByDate('stocks', date, el);
+      return;
+    }
+    const tags = { '短期':'tag-short', '中期':'tag-mid', '长期':'tag-long' };
+    items.forEach(s => {
+      el.innerHTML += `
+        <div class="stock-item">
+          <div class="stock-hdr">
+            <div><span class="stock-name">${s.name}</span><span class="stock-code"> ${s.code}</span></div>
+            <span class="tag-market">${s.market}</span>
+          </div>
+          <div class="stock-meta">
+            ${s.industry} · <span class="${tags[s.horizon]}">${s.horizon}</span>
+          </div>
+          <div class="stock-reason">${s.reason}</div>
+        </div>
+      `;
+    });
+  } else {
+    // Report types: broker, kol, industry
+    const el = document.getElementById('report-' + type + '-list');
+    el.innerHTML = '';
+    let items = allData[type].filter(r => r.date === date);
+    items.sort((a, b) => b.date.localeCompare(a.date));
+    items.forEach(r => {
+      el.innerHTML += `
+        <div class="report-item">
+          <div class="report-source">${r.date} · 来源：<span class="report-source-name">${r.source}</span></div>
+          <div class="report-title">${r.title}</div>
+          <div class="report-summary">${r.summary}</div>
+        </div>
+      `;
+    });
+  }
+}
+
+// ===== Snapshot Load/Save =====
+async function loadSnapshotByDate(dataType, date, container) {
+  try {
+    const res = await client.db.from('daily_snapshots').list()
+      .eq('snapshot_date', date).eq('data_type', dataType).order('created_at', 'desc').limit(1);
+    if (res.success && res.data) {
+      const items = Array.isArray(res.data) ? res.data : [res.data];
+      if (items.length > 0) {
+        const data = JSON.parse(items[0].data_json);
+        // Render
+        if (dataType === 'stocks') {
+          const tags = { '短期':'tag-short', '中期':'tag-mid', '长期':'tag-long' };
+          data.forEach(s => {
+            container.innerHTML += `
+              <div class="stock-item">
+                <div class="stock-hdr">
+                  <div><span class="stock-name">${s.name}</span><span class="stock-code"> ${s.code}</span></div>
+                  <span class="tag-market">${s.market}</span>
+                </div>
+                <div class="stock-meta">
+                  ${s.industry} · <span class="${tags[s.horizon]}">${s.horizon}</span>
+                </div>
+                <div class="stock-reason">${s.reason}</div>
+              </div>
+            `;
+          });
+        } else {
+          data.forEach(r => {
+            container.innerHTML += `
+              <div class="report-item">
+                <div class="report-source">${r.date} · 来源：<span class="report-source-name">${r.source}</span></div>
+                <div class="report-title">${r.title}</div>
+                <div class="report-summary">${r.summary}</div>
+              </div>
+            `;
+          });
+        }
+        return;
+      }
+    }
+    container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--gray-90);font-size:13px;">该日期暂无数据</div>';
+  } catch(e) {
+    container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--gray-90);font-size:13px;">该日期暂无数据</div>';
+  }
+}
+
+// ===== Render Page =====
+function renderPage() {
+  searchInvestments();
+  searchReports('broker');
+  searchReports('kol');
+  searchReports('industry');
+  // Render history bars
+  renderHistoryBar('broker');
+  renderHistoryBar('kol');
+  renderHistoryBar('industry');
+  // Render new feature pages
+  renderNewFeatures();
+}
+
+// ===== Image Upload =====
+const CATEGORY_MAP = { 'cpo': 'CPO/光通信', 'ai': 'AI算力', 'storage': '存储' };
+const GALLERY_IDS = { 'cpo': 'cpo-gallery', 'ai': 'ai-gallery', 'storage': 'storage-gallery' };
+
+function uploadImage(cat, input) {
+  const file = input.files[0];
+  if (!file) return;
+  input.value = '';
+  const formData = new FormData();
+  formData.append('file', file);
+  const token = localStorage.getItem('baas_token');
+  showToast('上传中...');
+  fetch(BASE_URL + '/common/upload', {
+    method: 'POST',
+    headers: {
+      'CODE_FLYING': API_KEY,
+      ...(token ? { 'Authorization': 'Bearer ' + token } : {})
+    },
+    body: formData
+  })
+  .then(r => r.json())
+  .then(res => {
+    if (res.success && res.data) {
+      saveImage(cat, res.data.url);
+    } else {
+      showToast('上传失败', 'error');
+    }
+  })
+  .catch(() => showToast('上传失败', 'error'));
+}
+
+async function saveImage(cat, url) {
+  try {
+    await client.db.from('industry_images').insert()
+      .values({ category: cat, image_url: url, title: '', created_at: new Date().toISOString() });
+    showToast('上传成功');
+    loadImages(cat);
+  } catch(e) {
+    // Even if DB save fails, still show uploaded image
+    showToast('上传成功');
+    addToGallery(cat, url);
+  }
+}
+
+function addToGallery(cat, url) {
+  const el = document.getElementById(GALLERY_IDS[cat]);
+  const div = document.createElement('div');
+  div.className = 'gallery-item';
+  div.innerHTML = `<img src="${url}" alt="图片">` +
+    `<a class="dl" href="${url}" download target="_blank">📥</a>`;
+  el.prepend(div);
+}
+
+async function loadImages(cat) {
+  try {
+    const res = await client.db.from('industry_images').list().eq('category', cat).order('created_at', 'desc');
+    const el = document.getElementById(GALLERY_IDS[cat]);
+    el.innerHTML = '';
+    if (res.success && res.data) {
+      const items = Array.isArray(res.data) ? res.data : [res.data];
+      items.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'gallery-item';
+        div.innerHTML = `<img src="${item.image_url}" alt="图片">` +
+          `<a class="dl" href="${item.image_url}" download target="_blank">📥</a>`;
+        el.appendChild(div);
+      });
+    }
+  } catch(e) {
+    // silently fail
+  }
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ===== Init =====
+// Initialize client (images table)
+const client = aipexbase.createClient({ baseUrl: BASE_URL, apiKey: API_KEY });
+
+renderPage();
+
+// Load images for each category
+['cpo', 'ai', 'storage'].forEach(cat => loadImages(cat));
+
+// Check hash navigation
+window.addEventListener('hashchange', () => {
+  const hash = location.hash.replace('#','');
+  if (hash) navigate(hash);
+});
+</script>
+
+<!-- ===== 数据来源说明 ===== -->
+<div class="section" style="margin-top:20px;background:#f0f0f0;border:none;box-shadow:none;">
+  <div style="font-size:11px;color:#999;line-height:1.7;">
+    <div style="font-weight:600;font-size:13px;color:#666;margin-bottom:6px;">📚 数据来源说明</div>
+    <div>本平台所有数据均基于标准4层数据采集体系获取：</div>
+    <div>• 🥇 <strong>同花顺Iwencai API</strong> — 30个技能，首选结构化数据</div>
+    <div>• 🥈 <strong>东方财富妙想 API</strong> — 5个技能，交叉验证</div>
+    <div>• 🥉 <strong>权威媒体</strong> — 财联社/证券时报等13家</div>
+    <div>• <strong>通用搜索</strong> — xiaoyi-web-search兜底</div>
+    <div style="margin-top:4px;">详细数据采集工作流参见：福泰路1号 WORKFLOW.md</div>
+  </div>
+</div>
+</body>
+</html>
+
